@@ -50,7 +50,9 @@ class King(Piece):
         self.name = PIECE_REPR[self.color][King]
 
     def can_move(self, target):
-        pass
+        if abs(self.pos[0] - target[0]) > 1 or abs(self.pos[1] - target[1]) > 1:
+            return False
+        return Piece.horizontal_move(self.pos, target) or Piece.diagonal_move(self.pos, target)
 
 
 class Rook(Piece):
