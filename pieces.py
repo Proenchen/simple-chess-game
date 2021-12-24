@@ -1,4 +1,5 @@
 from enum import Enum, auto
+from board import Board
 
 
 class Color(Enum):
@@ -60,9 +61,7 @@ class Bishop(Piece):
         self.name = PIECE_REPR[self.color][Bishop]
 
     def can_move(self, target):
-        row_change = self.pos[0] - target[0]
-        col_change = self.pos[1] - target[1]
-        return abs(row_change) == abs(col_change)
+        return Board.diagonal_move(self.pos, target)
 
 
 class Pawn(Piece):
