@@ -26,11 +26,18 @@ class Game:
             self.current_player = Color.BLACK if self.current_player == Color.WHITE else Color.WHITE
 
     def can_move(self, piece, to_pos):
+        # if piece is owned by the current player
+        if piece.color != self.current_player:
+            return False
+
         # extra handling for pawn takes
         # TODO: instanceof vermeiden
-        if (isinstance(piece, Pawn) and piece.can_move(to_pos) and self.board.get_piece(to_pos) is not None and
-                self.board.get_piece(to_pos).color != piece.color):
-            return piece.take
+        if (isinstance(piece, Pawn) and piece.can_move(to_pos)):
+            if (piece.take and self.board.get_piece(to_pos) is None):
+                return False
+            if (self.board.get_piece(to_pos) is not None and
+                    self.board.get_piece(to_pos).color != piece.color):
+                return piece.take
 
         # checks if piece is in between, if piece moves diagonally
         if Piece.diagonal_move(piece.pos, to_pos):
@@ -42,7 +49,7 @@ class Game:
                     return False
                 y += step_y
 
-        # checks if piece is in between, if piece moves diagonally
+        # checks if piece is in between, if piece moves horizontally
         if Piece.horizontal_move(piece.pos, to_pos) and piece.pos[0] == to_pos[0]:
             step = 1 if piece.pos[1] < to_pos[1] else -1
             for y in range(piece.pos[1] + step, to_pos[1], step):
@@ -55,8 +62,6 @@ class Game:
                 if self.board.get_piece((x, piece.pos[1])) is not None:
                     return False
 
-        return (piece.can_move(to_pos) and  # if piece is allowed to move ther in general
-                # if piece is owned by the current player
-                piece.color == self.current_player and not
-                # if piece is owned by the current player
+        return (piece.can_move(to_pos) and not  # if piece is allowed to move ther in general
+                # if a player tries to take his own piece
                 (self.board.get_piece(to_pos) is not None and self.board.get_piece(to_pos).color == piece.color))
