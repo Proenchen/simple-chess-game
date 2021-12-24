@@ -32,7 +32,8 @@ class Knight(Piece):
         self.name = PIECE_REPR[self.color][Knight]
 
     def can_move(self, target):
-        return False
+        return ((abs(self.pos[0] - target[0]) == 2 and abs(self.pos[1] - target[1]) == 1) or
+                (abs(self.pos[1] - target[1]) == 2 and abs(self.pos[0] - target[0]) == 1))
 
 
 class Queen(Piece):
