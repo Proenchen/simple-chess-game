@@ -37,8 +37,3 @@ class Board:
             self.board[to_pos[0]][to_pos[1]] = self.board[from_pos[0]][from_pos[1]]
             self.board[to_pos[0]][to_pos[1]].pos = (to_pos[0], to_pos[1])
             self.board[from_pos[0]][from_pos[1]] = None
-
-    def diagonal_move(from_pos, to_pos):
-        row_change = from_pos[0] - to_pos[0]
-        col_change = from_pos[1] - to_pos[1]
-        return abs(row_change) == abs(col_change)
