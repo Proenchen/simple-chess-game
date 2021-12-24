@@ -60,4 +60,3 @@ class Game:
                 piece.color == self.current_player and not
                 # if piece is owned by the current player
                 (self.board.get_piece(to_pos) is not None and self.board.get_piece(to_pos).color == piece.color))
-

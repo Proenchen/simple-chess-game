@@ -41,7 +41,7 @@ class Queen(Piece):
         self.name = PIECE_REPR[self.color][Queen]
 
     def can_move(self, target):
-        pass
+        return Piece.horizontal_move(self.pos, target) or Piece.diagonal_move(self.pos, target)
 
 
 class King(Piece):
