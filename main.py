@@ -1,14 +1,15 @@
 import pygame as pg
 import os
 import pieces
+import ctypes
 from game import Game
 from board import Board, BOARD_SIZE
 
 GAME_NAME = "Julians Schachspiel"
 WINDOW_ICON = 'icon.png'
-WIDTH, HEIGHT = 900, 900
+WIDTH, HEIGHT = 888, 888  # should be a multiple of 8
 SQ_SIZE = WIDTH // BOARD_SIZE
-FPS = 60
+FPS = 120
 WHITE_SQ_COLOR = '#f0d9b5'
 DARK_SQ_COLOR = '#b58863'
 MOVE_SQ_COLOR = '#d0d46c'
@@ -60,6 +61,7 @@ def main():
     curr_position = game.get_position()
     running = True
     drag = None
+    showed_message = False
 
     # main-loop
     while running:
@@ -78,16 +80,19 @@ def main():
 
             elif event.type == pg.MOUSEBUTTONUP and drag:
                 to_pos = get_rc_num(pg.mouse.get_pos())
-                # print(piece.pos)
-                # print(to_pos)
-                # print(game.can_move(piece, to_pos))
-                if not game.allowed_move(piece, to_pos):
+
+                # PLEASE DO NOT MOVE PIECES OUT OF THE WINDOW!
+                if to_pos[0] >= BOARD_SIZE or to_pos[0] < 0 or to_pos[1] >= BOARD_SIZE or to_pos[1] < 0:
+                    curr_position[from_pos] = piece
+                    drag = None
+                    continue
+
+                elif not game.allowed_move(piece, to_pos):
                     curr_position[from_pos] = piece
                 else:
                     curr_position[to_pos] = piece
                     game.move(piece, from_pos, to_pos)
 
-                # print(game.board.__repr__)
                 drag = None
 
         draw_board(screen)
@@ -96,8 +101,11 @@ def main():
             pg.draw.rect(screen, MOVE_SQ_COLOR, (*get_coordinate(game.last_move_from), SQ_SIZE, SQ_SIZE))
             pg.draw.rect(screen, MOVE_SQ_COLOR, (*get_coordinate(game.last_move_to), SQ_SIZE, SQ_SIZE))
 
-        if game.is_Check():
+        if game.is_check():
             pg.draw.rect(screen, CHECK_COLOR, (*get_coordinate(game.get_active_king_pos()), SQ_SIZE, SQ_SIZE))
+            if game.isCheckmate and not showed_message:
+                showed_message = True
+                ctypes.windll.user32.MessageBoxW(None, "Checkmate!", "A player won!", 1)
 
         draw_pieces(curr_position, screen, game_pieces)
 

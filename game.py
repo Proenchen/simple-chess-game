@@ -28,6 +28,7 @@ class Game:
             self.last_move_to = to_pos
             self._change_color()
             self.genarate_moves()
+            self.is_mate()
 
     # Checks if a move is allowed
     def allowed_move(self, piece, to_pos):
@@ -41,16 +42,14 @@ class Game:
 
         # Checks if the king will be in chech in the resulting position
         self_copy = copy.deepcopy(self)
-        from_pos = piece.pos
-        self_copy.board.move(from_pos, to_pos)
+        self_copy.board.move(piece.pos, to_pos)
         self_copy.genarate_moves()
-        if self_copy.is_Check():
+        if self_copy.is_check():
             return False
-
         return True
 
     # Checks the position for checks
-    def is_Check(self):
+    def is_check(self):
         king_pos = self._get_king_pos(self.current_player)
         for row in range(BOARD_SIZE):
             for col in range(BOARD_SIZE):
@@ -58,6 +57,16 @@ class Game:
                 if piece is not None and piece.has_legal_move(king_pos):
                     return True
         return False
+
+    def is_mate(self):
+        if self.is_check():
+            for row in range(BOARD_SIZE):
+                for col in range(BOARD_SIZE):
+                    piece = self.board.get_piece((row, col))
+                    if piece is not None and self._exist_legal_move(piece):
+                        return False
+            self.isCheckmate = True
+            return True
 
     # Returns the position of the king of the current player
     def get_active_king_pos(self):
@@ -126,3 +135,18 @@ class Game:
             for col in range(BOARD_SIZE):
                 if self._can_move(piece, (row, col)):
                     piece.add_legal_move((row, col))
+
+    def _exist_legal_move(self, piece):
+        if not piece.legal_moves:
+            return False
+
+        if not piece.color == self.current_player:
+            return False
+
+        for move in piece.legal_moves:
+            self_copy = copy.deepcopy(self)
+            self_copy.board.move(piece.pos, move)
+            self_copy.genarate_moves()
+            if not self_copy.is_check():
+                return True
+        return False
