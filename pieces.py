@@ -10,12 +10,22 @@ class Piece:
     def __init__(self, color, pos):
         self.color = color
         self.pos = pos
+        self.legal_moves = []
 
     def __repr__(self):
         return self.name
 
     def can_move(self, target):
         pass
+
+    def add_legal_move(self, to_pos):
+        self.legal_moves.append(to_pos)
+
+    def has_legal_move(self, to_pos):
+        return to_pos in self.legal_moves
+
+    def clear_legal_moves(self):
+        self.legal_moves.clear()
 
     def diagonal_move(from_pos, to_pos):
         row_change = from_pos[0] - to_pos[0]

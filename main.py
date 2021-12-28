@@ -12,6 +12,7 @@ FPS = 60
 WHITE_SQ_COLOR = '#f0d9b5'
 DARK_SQ_COLOR = '#b58863'
 MOVE_SQ_COLOR = '#d0d46c'
+CHECK_COLOR = '#e6725b'
 IMG_DIR = 'assets'
 
 
@@ -80,7 +81,7 @@ def main():
                 # print(piece.pos)
                 # print(to_pos)
                 # print(game.can_move(piece, to_pos))
-                if not game.can_move(piece, to_pos):
+                if not game.allowed_move(piece, to_pos):
                     curr_position[from_pos] = piece
                 else:
                     curr_position[to_pos] = piece
@@ -94,6 +95,9 @@ def main():
         if game.last_move_from and game.last_move_to is not None:
             pg.draw.rect(screen, MOVE_SQ_COLOR, (*get_coordinate(game.last_move_from), SQ_SIZE, SQ_SIZE))
             pg.draw.rect(screen, MOVE_SQ_COLOR, (*get_coordinate(game.last_move_to), SQ_SIZE, SQ_SIZE))
+
+        if game.is_Check():
+            pg.draw.rect(screen, CHECK_COLOR, (*get_coordinate(game.get_active_king_pos()), SQ_SIZE, SQ_SIZE))
 
         draw_pieces(curr_position, screen, game_pieces)
 
