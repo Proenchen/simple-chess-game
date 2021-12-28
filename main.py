@@ -103,9 +103,6 @@ def main():
 
         if game.is_check():
             pg.draw.rect(screen, CHECK_COLOR, (*get_coordinate(game.get_active_king_pos()), SQ_SIZE, SQ_SIZE))
-            if game.isCheckmate and not showed_message:
-                showed_message = True
-                ctypes.windll.user32.MessageBoxW(None, "Checkmate!", "A player won!", 1)
 
         draw_pieces(curr_position, screen, game_pieces)
 
@@ -114,6 +111,10 @@ def main():
             screen.blit(drag, rect)
 
         pg.display.flip()
+
+        if game.isCheckmate and not showed_message:
+            showed_message = True
+            ctypes.windll.user32.MessageBoxW(None, "Checkmate!", "Game ends!", 1)
 
 
 if __name__ == "__main__":
