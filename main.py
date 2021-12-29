@@ -1,7 +1,8 @@
 import pygame as pg
 import os
 import pieces
-import ctypes
+import tkinter
+from tkinter import messagebox
 from game import Game
 from board import Board, BOARD_SIZE
 
@@ -114,7 +115,9 @@ def main():
 
         if game.isCheckmate and not showed_message:
             showed_message = True
-            ctypes.windll.user32.MessageBoxW(None, "Checkmate!", "Game ends!", 1)
+            root = tkinter.Tk()
+            root.withdraw()
+            messagebox.showinfo("Checkmate!", "A player has won")
 
 
 if __name__ == "__main__":

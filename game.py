@@ -148,6 +148,5 @@ class Game:
             self_copy.board.move(piece.pos, move)
             self_copy.genarate_moves()
             if not self_copy.is_check():
-                print(move)
                 return True
         return False
