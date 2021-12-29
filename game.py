@@ -1,5 +1,5 @@
 import copy
-from pieces import Color, Pawn, Piece, King
+from pieces import Color, Pawn, Piece, King, Rook
 from board import Board, BOARD_SIZE
 
 
@@ -26,6 +26,15 @@ class Game:
             self.board.move(from_pos, to_pos)
             self.last_move_from = from_pos
             self.last_move_to = to_pos
+
+            if isinstance(piece, King):
+                piece.moved = True
+                if to_pos[1] - from_pos[1] == 2:
+                    self.board.move((to_pos[0], to_pos[1] + 1), (from_pos[0], from_pos[1] + 1))
+
+                if to_pos[1] - from_pos[1] == -2:
+                    self.board.move((to_pos[0], to_pos[1] - 2), (from_pos[0], from_pos[1] - 1))
+
             self._change_color()
             self.genarate_moves()
             self.is_mate()
@@ -81,6 +90,7 @@ class Game:
                     self._generate_moves_for(piece)
 
     # private helper methods
+    # -----------------------------------------------------------------------------------------------
     def _get_king_pos(self, color):
         for row in range(BOARD_SIZE):
             for col in range(BOARD_SIZE):
@@ -94,12 +104,24 @@ class Game:
     def _can_move(self, piece, to_pos):
         # extra handling for pawn takes
         # TODO: instanceof vermeiden
-        if (isinstance(piece, Pawn) and piece.can_move(to_pos)):
-            if (piece.take and self.board.get_piece(to_pos) is None):
+        if isinstance(piece, Pawn) and piece.can_move(to_pos):
+            if piece.take and self.board.get_piece(to_pos) is None:
                 return False
             if (self.board.get_piece(to_pos) is not None and
                     self.board.get_piece(to_pos).color != piece.color):
                 return piece.take
+
+        # castling handling
+        if isinstance(piece, King) and not piece.moved:
+            # short castle
+            if to_pos[0] == piece.pos[0] and (to_pos[1] - piece.pos[1] == 2):
+                rook = self.board.get_piece((piece.pos[0], piece.pos[1] + 3))
+                return rook is not None and isinstance(rook, Rook) and rook.color == piece.color
+
+            # long castle
+            if to_pos[0] == piece.pos[0] and (to_pos[1] - piece.pos[1] == -2):
+                rook = self.board.get_piece((piece.pos[0], piece.pos[1] - 4))
+                return rook is not None and isinstance(rook, Rook) and rook.color == piece.color
 
         # checks if piece is in between, if piece moves diagonally
         if Piece.diagonal_move(piece.pos, to_pos):

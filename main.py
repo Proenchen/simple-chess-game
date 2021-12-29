@@ -8,7 +8,7 @@ from board import Board, BOARD_SIZE
 
 GAME_NAME = "Julians Schachspiel"
 WINDOW_ICON = 'icon.png'
-WIDTH, HEIGHT = 888, 888  # should be a multiple of 8
+WIDTH, HEIGHT = 888, 888  # should be a multiple of BOARD_SIZE
 SQ_SIZE = WIDTH // BOARD_SIZE
 FPS = 120
 WHITE_SQ_COLOR = '#f0d9b5'
@@ -88,12 +88,8 @@ def main():
                     drag = None
                     continue
 
-                elif not game.allowed_move(piece, to_pos):
-                    curr_position[from_pos] = piece
-                else:
-                    curr_position[to_pos] = piece
-                    game.move(piece, from_pos, to_pos)
-
+                game.move(piece, from_pos, to_pos)
+                curr_position = game.get_position()
                 drag = None
 
         draw_board(screen)

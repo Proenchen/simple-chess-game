@@ -58,6 +58,7 @@ class Queen(Piece):
 class King(Piece):
     def __init__(self, color, pos):
         super().__init__(color, pos)
+        self.moved = False
         self.name = PIECE_REPR[self.color][King]
 
     def can_move(self, target):
