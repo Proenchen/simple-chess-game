@@ -96,15 +96,16 @@ class Pawn(Piece):
         if abs(self.pos[1] - target[1]) > 1:
             return False
 
-        if abs(self.pos[1] - target[1]) == 1:
-            self.take = True
-
         if self.color == Color.WHITE:
+            if abs(self.pos[1] - target[1]) == 1 and (self.pos[0] - target[0]) == 1:
+                self.take = True
             if self.pos[0] == 6:
                 return (self.pos[0] - target[0]) == 2 or (self.pos[0] - target[0]) == 1
             return (self.pos[0] - target[0]) == 1
 
         if self.color == Color.BLACK:
+            if abs(self.pos[1] - target[1]) == 1 and (target[0] - self.pos[0]) == 1:
+                self.take = True
             if self.pos[0] == 1:
                 return (target[0] - self.pos[0]) == 2 or (target[0] - self.pos[0]) == 1
             return (target[0] - self.pos[0]) == 1
