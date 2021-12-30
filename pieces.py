@@ -89,16 +89,20 @@ class Pawn(Piece):
     def __init__(self, color, pos):
         super().__init__(color, pos)
         self.take = False
+        self.en_passant = False
         self.name = PIECE_REPR[self.color][Pawn]
 
     def can_move(self, target):
         self.take = False
+        self.en_passant = False
         if abs(self.pos[1] - target[1]) > 1:
             return False
 
         if self.color == Color.WHITE:
             if abs(self.pos[1] - target[1]) == 1 and (self.pos[0] - target[0]) == 1:
                 self.take = True
+                if self.pos[0] == 3:
+                    self.en_passant = True
             if self.pos[0] == 6:
                 return ((self.pos[0] - target[0]) == 2 and self.pos[1] == target[1]) or (self.pos[0] - target[0]) == 1
             return (self.pos[0] - target[0]) == 1
@@ -106,6 +110,8 @@ class Pawn(Piece):
         if self.color == Color.BLACK:
             if abs(self.pos[1] - target[1]) == 1 and (target[0] - self.pos[0]) == 1:
                 self.take = True
+                if self.pos[0] == 4:
+                    self.en_passant = True
             if self.pos[0] == 1:
                 return ((target[0] - self.pos[0]) == 2 and self.pos[1] == target[1]) or (target[0] - self.pos[0]) == 1
             return (target[0] - self.pos[0]) == 1

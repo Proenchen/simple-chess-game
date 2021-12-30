@@ -30,6 +30,9 @@ class Board:
     def get_piece(self, pos):
         return self.board[pos[0]][pos[1]]
 
+    def remove_piece(self, pos):
+        self.board[pos[0], pos[1]] = None
+
     def move(self, from_pos, to_pos):
         if from_pos == to_pos:
             return

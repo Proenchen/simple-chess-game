@@ -10,6 +10,7 @@ class Game:
         self.last_move_to = None
         self.is_checkmate = False
         self.stalemate = False
+        self.en_passant = False
         self.current_player = Color.WHITE
         self.genarate_moves()
 
@@ -35,6 +36,9 @@ class Game:
 
                 if to_pos[1] - from_pos[1] == -2:
                     self.board.move((to_pos[0], to_pos[1] - 2), (from_pos[0], from_pos[1] - 1))
+
+            if self.en_passant:
+                self.board.remove_piece((self.last_move_from[0], self.last_move_to[1]))
 
             self._change_color()
             self.genarate_moves()
@@ -107,8 +111,17 @@ class Game:
 
     def _can_move(self, piece, to_pos):
         # extra handling for pawn takes
-        # TODO: instanceof vermeiden
+        # TODO: verschönern!
         if isinstance(piece, Pawn) and piece.can_move(to_pos):
+            if (piece.en_passant and
+                    isinstance(self.board.get_piece((piece.pos[0], to_pos[1])), Pawn) and
+                    self.board.get_piece((piece.pos[0], to_pos[1])).color != piece.color and
+                    self.last_move_to == (piece.pos[0], to_pos[1]) and
+                    abs(self.last_move_from[0] - piece.pos[0]) == 2 and
+                    self.last_move_from[1] == to_pos[1]):
+                self.en_passant = True
+                return True
+
             if piece.take and self.board.get_piece(to_pos) is None:
                 return False
             if (self.board.get_piece(to_pos) is not None and
