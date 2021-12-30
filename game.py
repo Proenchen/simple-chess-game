@@ -1,5 +1,5 @@
 import copy
-from pieces import Color, Pawn, Piece, King, Rook, Queen
+import pieces as p
 from board import Board, BOARD_SIZE
 
 
@@ -11,7 +11,8 @@ class Game:
         self.is_checkmate = False
         self.stalemate = False
         self.en_passant = False
-        self.current_player = Color.WHITE
+        self.promotion = False
+        self.current_player = p.Color.WHITE
         self.genarate_moves()
 
     def get_position(self):
@@ -29,7 +30,7 @@ class Game:
             self.last_move_from = from_pos
             self.last_move_to = to_pos
 
-            if isinstance(piece, King):
+            if isinstance(piece, p.King):
                 piece.moved = True
                 if to_pos[1] - from_pos[1] == 2:
                     self.board.move((to_pos[0], to_pos[1] + 1), (from_pos[0], from_pos[1] + 1))
@@ -37,8 +38,8 @@ class Game:
                 if to_pos[1] - from_pos[1] == -2:
                     self.board.move((to_pos[0], to_pos[1] - 2), (from_pos[0], from_pos[1] - 1))
 
-            if isinstance(piece, Pawn) and piece.promote:
-                self.board.place_piece(Queen(self.current_player, piece.pos), piece.pos)
+            if isinstance(piece, p.Pawn) and piece.promote:
+                self.promotion = True
 
             if self.en_passant:
                 self.board.remove_piece((self.last_move_from[0], self.last_move_to[1]))
@@ -91,24 +92,34 @@ class Game:
                 if piece is not None:
                     self._generate_moves_for(piece)
 
+    def promote(self, name, pos, color):
+        cls = getattr(p, name)
+        self.board.place_piece(cls(color, pos), pos)
+        self._change_color()
+        self.genarate_moves()
+        if not self.is_mate():
+            self.is_stalemate()
+        self._change_color()
+        self.promotion = False
+
     # private helper methods
     # -----------------------------------------------------------------------------------------------
     def _get_king_pos(self, color):
         for row in range(BOARD_SIZE):
             for col in range(BOARD_SIZE):
                 piece = self.board.get_piece((row, col))
-                if piece is not None and piece.color == color and isinstance(piece, King):
+                if piece is not None and piece.color == color and isinstance(piece, p.King):
                     return (row, col)
 
     def _change_color(self):
-        self.current_player = Color.BLACK if self.current_player == Color.WHITE else Color.WHITE
+        self.current_player = p.Color.BLACK if self.current_player == p.Color.WHITE else p.Color.WHITE
 
     def _can_move(self, piece, to_pos):
         # extra handling for pawn takes
         # TODO: verschönern!
-        if isinstance(piece, Pawn) and piece.can_move(to_pos):
+        if isinstance(piece, p.Pawn) and piece.can_move(to_pos):
             if (piece.en_passant and
-                    isinstance(self.board.get_piece((piece.pos[0], to_pos[1])), Pawn) and
+                    isinstance(self.board.get_piece((piece.pos[0], to_pos[1])), p.Pawn) and
                     self.board.get_piece((piece.pos[0], to_pos[1])).color != piece.color and
                     self.last_move_to == (piece.pos[0], to_pos[1]) and
                     abs(self.last_move_from[0] - piece.pos[0]) == 2 and
@@ -123,31 +134,33 @@ class Game:
                 return piece.take
 
         # castling handling
-        if isinstance(piece, King) and not piece.moved:
+        if isinstance(piece, p.King) and not piece.moved:
             # short castle
             if to_pos[0] == piece.pos[0] and (to_pos[1] - piece.pos[1] == 2):
+                if self.is_check():
+                    return False
+
                 for i in range(piece.pos[1] + 1, piece.pos[1] + 3):
-                    if self.board.get_piece((piece.pos[0], i)) is not None:
-                        return False
-                    if self._check_on((piece.pos[0], i)):
+                    if self.board.get_piece((piece.pos[0], i)) is not None or self._check_on((piece.pos[0], i)):
                         return False
 
                 rook = self.board.get_piece((piece.pos[0], piece.pos[1] + 3))
-                return rook is not None and isinstance(rook, Rook) and rook.color == piece.color
+                return rook is not None and isinstance(rook, p.Rook) and rook.color == piece.color
 
             # long castle
             if to_pos[0] == piece.pos[0] and (to_pos[1] - piece.pos[1] == -2):
+                if self.is_check():
+                    return False
+
                 for i in range(piece.pos[1] - 3, piece.pos[1]):
-                    if self.board.get_piece((piece.pos[0], i)) is not None:
-                        return False
-                    if self._check_on((piece.pos[0], i)):
+                    if self.board.get_piece((piece.pos[0], i)) is not None or self._check_on((piece.pos[0], i)):
                         return False
 
                 rook = self.board.get_piece((piece.pos[0], piece.pos[1] - 4))
-                return rook is not None and isinstance(rook, Rook) and rook.color == piece.color
+                return rook is not None and isinstance(rook, p.Rook) and rook.color == piece.color
 
         # checks if piece is in between, if piece moves diagonally
-        if Piece.diagonal_move(piece.pos, to_pos):
+        if p.Piece.diagonal_move(piece.pos, to_pos):
             step_x = 1 if piece.pos[0] < to_pos[0] else -1
             step_y = 1 if piece.pos[1] < to_pos[1] else -1
             y = piece.pos[1] + step_y
@@ -157,13 +170,13 @@ class Game:
                 y += step_y
 
         # checks if piece is in between, if piece moves horizontally
-        if Piece.horizontal_move(piece.pos, to_pos) and piece.pos[0] == to_pos[0]:
+        if p.Piece.horizontal_move(piece.pos, to_pos) and piece.pos[0] == to_pos[0]:
             step = 1 if piece.pos[1] < to_pos[1] else -1
             for y in range(piece.pos[1] + step, to_pos[1], step):
                 if self.board.get_piece((piece.pos[0], y)) is not None:
                     return False
 
-        if Piece.horizontal_move(piece.pos, to_pos) and piece.pos[1] == to_pos[1]:
+        if p.Piece.horizontal_move(piece.pos, to_pos) and piece.pos[1] == to_pos[1]:
             step = 1 if piece.pos[0] < to_pos[0] else -1
             for x in range(piece.pos[0] + step, to_pos[0], step):
                 if self.board.get_piece((x, piece.pos[1])) is not None:

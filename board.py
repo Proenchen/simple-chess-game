@@ -41,7 +41,9 @@ class Board:
             return
 
         piece = self.get_piece(from_pos)
-        if self.board[from_pos[0]][from_pos[1]] is not None:
-            self.place_piece(piece, to_pos)
-            piece.pos = to_pos
-            self.remove_piece(from_pos)
+        if piece is None:
+            return
+
+        self.place_piece(piece, to_pos)
+        piece.pos = to_pos
+        self.remove_piece(from_pos)

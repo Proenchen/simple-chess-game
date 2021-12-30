@@ -2,7 +2,7 @@ import pygame as pg
 import os
 import pieces
 import tkinter
-from tkinter import messagebox
+from tkinter import PhotoImage, messagebox
 from game import Game
 from board import Board, BOARD_SIZE
 
@@ -45,6 +45,21 @@ def load_pieces():
 def draw_pieces(p, screen, pieces):
     for rc, piece in p.items():
         screen.blit(pieces[piece.__repr__()], get_coordinate(rc))
+
+
+def promote(id, game, color, window):
+    if id == 1:
+        game.promote(pieces.Queen.__name__, game.last_move_to, color)
+        window.destroy()
+    elif id == 2:
+        game.promote(pieces.Rook.__name__, game.last_move_to, color)
+        window.destroy()
+    elif id == 3:
+        game.promote(pieces.Knight.__name__, game.last_move_to, color)
+        window.destroy()
+    elif id == 4:
+        game.promote(pieces.Bishop.__name__, game.last_move_to, color)
+        window.destroy()
 
 
 def main():
@@ -120,6 +135,44 @@ def main():
             root = tkinter.Tk()
             root.withdraw()
             messagebox.showinfo("Draw!", "Stalemate!")
+
+        if game.promotion:
+            color = pieces.Color.WHITE if game.current_player == pieces.Color.BLACK else pieces.Color.BLACK
+            root = tkinter.Tk()
+            root.title('Promote to...')
+            root.geometry("430x120")
+            root.config(bg='#DFFAFF')
+            wq_icon = PhotoImage(file=os.path.join(IMG_DIR, 'wq_small.png'))
+            wr_icon = PhotoImage(file=os.path.join(IMG_DIR, 'wr_small.png'))
+            wn_icon = PhotoImage(file=os.path.join(IMG_DIR, 'wn_small.png'))
+            wb_icon = PhotoImage(file=os.path.join(IMG_DIR, 'wb_small.png'))
+            tkinter.Button(
+                root, image=wq_icon,
+                bd=0, bg='#DFFAFF', activebackground='#DFFAFF',
+                command=lambda: promote(1, game, color, root)
+            ).place(x=20, y=15)
+
+            tkinter.Button(
+                root, image=wr_icon,
+                bd=0, bg='#DFFAFF', activebackground='#DFFAFF',
+                command=lambda: promote(2, game, color, root)
+            ).place(x=120, y=15)
+
+            tkinter.Button(
+                root, image=wn_icon,
+                bd=0, bg='#DFFAFF', activebackground='#DFFAFF',
+                command=lambda: promote(3, game, color, root)
+            ).place(x=220, y=15)
+
+            tkinter.Button(
+                root, image=wb_icon,
+                bd=0, bg='#DFFAFF', activebackground='#DFFAFF',
+                command=lambda: promote(4, game, color, root)
+            ).place(x=320, y=15)
+
+            root.mainloop()
+            curr_position = game.get_position()
+            draw_board(screen)
 
 
 if __name__ == "__main__":
