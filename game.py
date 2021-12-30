@@ -57,12 +57,7 @@ class Game:
             return False
 
         # Checks if the king will be in check in the resulting position
-        self_copy = copy.deepcopy(self)
-        self_copy.board.move(piece.pos, to_pos)
-        self_copy.genarate_moves()
-        if self_copy.is_check():
-            return False
-        return True
+        return self.check_for_resulting_checks(piece, to_pos)
 
     # Checks the position for checks
     def is_check(self):
@@ -191,10 +186,7 @@ class Game:
             return False
 
         for move in piece.legal_moves:
-            self_copy = copy.deepcopy(self)
-            self_copy.board.move(piece.pos, move)
-            self_copy.genarate_moves()
-            if not self_copy.is_check():
+            if self.check_for_resulting_checks(piece, move):
                 return True
         return False
 
@@ -212,4 +204,12 @@ class Game:
                 piece = self.board.get_piece((row, col))
                 if piece is not None and piece.has_legal_move(pos) and piece.color != self.current_player:
                     return True
+        return False
+
+    def check_for_resulting_checks(self, piece, to_pos):
+        self_copy = copy.deepcopy(self)
+        self_copy.board.move(piece.pos, to_pos)
+        self_copy.genarate_moves()
+        if not self_copy.is_check():
+            return True
         return False
