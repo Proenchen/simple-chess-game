@@ -1,9 +1,9 @@
-from enum import Enum, auto
+from enum import Enum
 
 
 class Color(Enum):
-    WHITE = auto()
-    BLACK = auto()
+    WHITE = "White"
+    BLACK = "Black"
 
 
 class Piece:

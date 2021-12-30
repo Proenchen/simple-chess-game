@@ -113,7 +113,7 @@ def main():
             showed_message = True
             root = tkinter.Tk()
             root.withdraw()
-            messagebox.showinfo("Checkmate!", "A player has won")
+            messagebox.showinfo("Checkmate!", "{} was checkmated".format(game.current_player.value))
 
         if game.stalemate and not showed_message:
             showed_message = True

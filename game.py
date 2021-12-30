@@ -78,7 +78,6 @@ class Game:
     def is_stalemate(self):
         if not self._moves_left():
             self.stalemate = True
-            print("Stalemate!")
             return True
         return False
 
@@ -185,7 +184,6 @@ class Game:
             self_copy.board.move(piece.pos, move)
             self_copy.genarate_moves()
             if not self_copy.is_check():
-                print(move)
                 return True
         return False
 
@@ -194,6 +192,5 @@ class Game:
             for col in range(BOARD_SIZE):
                 piece = self.board.get_piece((row, col))
                 if piece is not None and self._exist_legal_move(piece):
-                    print(piece)
                     return True
         return False
