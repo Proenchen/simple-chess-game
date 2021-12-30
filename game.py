@@ -56,7 +56,7 @@ class Game:
         if piece.color != self.current_player or not self._can_move(piece, to_pos):
             return False
 
-        # Checks if the king will be in chech in the resulting position
+        # Checks if the king will be in check in the resulting position
         self_copy = copy.deepcopy(self)
         self_copy.board.move(piece.pos, to_pos)
         self_copy.genarate_moves()
@@ -67,12 +67,7 @@ class Game:
     # Checks the position for checks
     def is_check(self):
         king_pos = self._get_king_pos(self.current_player)
-        for row in range(BOARD_SIZE):
-            for col in range(BOARD_SIZE):
-                piece = self.board.get_piece((row, col))
-                if piece is not None and piece.has_legal_move(king_pos):
-                    return True
-        return False
+        return self._check_on(king_pos)
 
     def is_mate(self):
         if self.is_check() and not self._moves_left():
@@ -133,9 +128,10 @@ class Game:
         if isinstance(piece, King) and not piece.moved:
             # short castle
             if to_pos[0] == piece.pos[0] and (to_pos[1] - piece.pos[1] == 2):
-
                 for i in range(piece.pos[1] + 1, piece.pos[1] + 3):
                     if self.board.get_piece((piece.pos[0], i)) is not None:
+                        return False
+                    if self._check_on((piece.pos[0], i)):
                         return False
 
                 rook = self.board.get_piece((piece.pos[0], piece.pos[1] + 3))
@@ -143,9 +139,10 @@ class Game:
 
             # long castle
             if to_pos[0] == piece.pos[0] and (to_pos[1] - piece.pos[1] == -2):
-
                 for i in range(piece.pos[1] - 3, piece.pos[1]):
                     if self.board.get_piece((piece.pos[0], i)) is not None:
+                        return False
+                    if self._check_on((piece.pos[0], i)):
                         return False
 
                 rook = self.board.get_piece((piece.pos[0], piece.pos[1] - 4))
@@ -206,5 +203,13 @@ class Game:
             for col in range(BOARD_SIZE):
                 piece = self.board.get_piece((row, col))
                 if piece is not None and self._exist_legal_move(piece):
+                    return True
+        return False
+
+    def _check_on(self, pos):
+        for row in range(BOARD_SIZE):
+            for col in range(BOARD_SIZE):
+                piece = self.board.get_piece((row, col))
+                if piece is not None and piece.has_legal_move(pos) and piece.color != self.current_player:
                     return True
         return False
