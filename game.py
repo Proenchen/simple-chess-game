@@ -134,7 +134,7 @@ class Game:
             # short castle
             if to_pos[0] == piece.pos[0] and (to_pos[1] - piece.pos[1] == 2):
 
-                for i in range(piece.pos[1], piece.pos[1] + 3):
+                for i in range(piece.pos[1] + 1, piece.pos[1] + 3):
                     if self.board.get_piece((piece.pos[0], i)) is not None:
                         return False
 
@@ -144,7 +144,7 @@ class Game:
             # long castle
             if to_pos[0] == piece.pos[0] and (to_pos[1] - piece.pos[1] == -2):
 
-                for i in range(piece.pos[1] - 4, piece.pos[1]):
+                for i in range(piece.pos[1] - 3, piece.pos[1]):
                     if self.board.get_piece((piece.pos[0], i)) is not None:
                         return False
 
