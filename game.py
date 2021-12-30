@@ -39,6 +39,7 @@ class Game:
 
             if self.en_passant:
                 self.board.remove_piece((self.last_move_from[0], self.last_move_to[1]))
+                self.en_passant = False
 
             self._change_color()
             self.genarate_moves()

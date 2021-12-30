@@ -39,4 +39,4 @@ class Board:
         if self.board[from_pos[0]][from_pos[1]] is not None:
             self.board[to_pos[0]][to_pos[1]] = self.board[from_pos[0]][from_pos[1]]
             self.board[to_pos[0]][to_pos[1]].pos = (to_pos[0], to_pos[1])
-            self.board[from_pos[0]][from_pos[1]] = None
+            self.remove_piece(from_pos)
