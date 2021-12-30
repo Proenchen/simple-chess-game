@@ -8,7 +8,8 @@ class Game:
         self.board = Board()
         self.last_move_from = None
         self.last_move_to = None
-        self.isCheckmate = False
+        self.is_checkmate = False
+        self.stalemate = False
         self.current_player = Color.WHITE
         self.genarate_moves()
 
@@ -37,12 +38,13 @@ class Game:
 
             self._change_color()
             self.genarate_moves()
-            self.is_mate()
+            if not self.is_mate():
+                self.is_stalemate()
 
     # Checks if a move is allowed
     def allowed_move(self, piece, to_pos):
         # No moves are allowd, if the game has ended
-        if self.isCheckmate:
+        if self.is_checkmate:
             return False
 
         # Checks if the player moves his own piece and if the move is possible
@@ -68,14 +70,17 @@ class Game:
         return False
 
     def is_mate(self):
-        if self.is_check():
-            for row in range(BOARD_SIZE):
-                for col in range(BOARD_SIZE):
-                    piece = self.board.get_piece((row, col))
-                    if piece is not None and self._exist_legal_move(piece):
-                        return False
-            self.isCheckmate = True
+        if self.is_check() and not self._moves_left():
+            self.is_checkmate = True
             return True
+        return False
+
+    def is_stalemate(self):
+        if not self._moves_left():
+            self.stalemate = True
+            print("Stalemate!")
+            return True
+        return False
 
     # Returns the position of the king of the current player
     def get_active_king_pos(self):
@@ -115,11 +120,21 @@ class Game:
         if isinstance(piece, King) and not piece.moved:
             # short castle
             if to_pos[0] == piece.pos[0] and (to_pos[1] - piece.pos[1] == 2):
+
+                for i in range(piece.pos[1], piece.pos[1] + 3):
+                    if self.board.get_piece((piece.pos[0], i)) is not None:
+                        return False
+
                 rook = self.board.get_piece((piece.pos[0], piece.pos[1] + 3))
                 return rook is not None and isinstance(rook, Rook) and rook.color == piece.color
 
             # long castle
             if to_pos[0] == piece.pos[0] and (to_pos[1] - piece.pos[1] == -2):
+
+                for i in range(piece.pos[1] - 4, piece.pos[1]):
+                    if self.board.get_piece((piece.pos[0], i)) is not None:
+                        return False
+
                 rook = self.board.get_piece((piece.pos[0], piece.pos[1] - 4))
                 return rook is not None and isinstance(rook, Rook) and rook.color == piece.color
 
@@ -170,5 +185,15 @@ class Game:
             self_copy.board.move(piece.pos, move)
             self_copy.genarate_moves()
             if not self_copy.is_check():
+                print(move)
                 return True
+        return False
+
+    def _moves_left(self):
+        for row in range(BOARD_SIZE):
+            for col in range(BOARD_SIZE):
+                piece = self.board.get_piece((row, col))
+                if piece is not None and self._exist_legal_move(piece):
+                    print(piece)
+                    return True
         return False

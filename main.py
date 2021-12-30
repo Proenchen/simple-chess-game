@@ -109,11 +109,17 @@ def main():
 
         pg.display.flip()
 
-        if game.isCheckmate and not showed_message:
+        if game.is_checkmate and not showed_message:
             showed_message = True
             root = tkinter.Tk()
             root.withdraw()
             messagebox.showinfo("Checkmate!", "A player has won")
+
+        if game.stalemate and not showed_message:
+            showed_message = True
+            root = tkinter.Tk()
+            root.withdraw()
+            messagebox.showinfo("Draw!", "Stalemate!")
 
 
 if __name__ == "__main__":
