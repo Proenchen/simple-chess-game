@@ -33,10 +33,15 @@ class Board:
     def remove_piece(self, pos):
         self.board[pos[0], pos[1]] = None
 
+    def place_piece(self, piece, pos):
+        self.board[pos[0]][pos[1]] = piece
+
     def move(self, from_pos, to_pos):
         if from_pos == to_pos:
             return
+
+        piece = self.get_piece(from_pos)
         if self.board[from_pos[0]][from_pos[1]] is not None:
-            self.board[to_pos[0]][to_pos[1]] = self.board[from_pos[0]][from_pos[1]]
-            self.board[to_pos[0]][to_pos[1]].pos = (to_pos[0], to_pos[1])
+            self.place_piece(piece, to_pos)
+            piece.pos = to_pos
             self.remove_piece(from_pos)

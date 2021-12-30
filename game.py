@@ -1,5 +1,5 @@
 import copy
-from pieces import Color, Pawn, Piece, King, Rook
+from pieces import Color, Pawn, Piece, King, Rook, Queen
 from board import Board, BOARD_SIZE
 
 
@@ -36,6 +36,9 @@ class Game:
 
                 if to_pos[1] - from_pos[1] == -2:
                     self.board.move((to_pos[0], to_pos[1] - 2), (from_pos[0], from_pos[1] - 1))
+
+            if isinstance(piece, Pawn) and piece.promote:
+                self.board.place_piece(Queen(self.current_player, piece.pos), piece.pos)
 
             if self.en_passant:
                 self.board.remove_piece((self.last_move_from[0], self.last_move_to[1]))
