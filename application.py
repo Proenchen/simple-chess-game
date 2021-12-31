@@ -16,6 +16,8 @@ DARK_SQ_COLOR = '#b58863'
 MOVE_SQ_COLOR = '#d0d46c'
 CHECK_COLOR = '#e6725b'
 IMG_DIR = 'assets'
+IMG_DIR_PIECES = IMG_DIR + '/piece_set_std'  # piece images
+IMG_DIR_ICONS = IMG_DIR + '/promotion_icons'  # icons for promotion window
 
 
 class Application:
@@ -121,7 +123,7 @@ class Application:
         for dict in pieces.PIECE_REPR.values():
             for repr in dict.values():
                 images[repr] = pg.transform.scale(
-                    pg.image.load(os.path.join(IMG_DIR, repr + '.png')), (SQ_SIZE, SQ_SIZE)
+                    pg.image.load(os.path.join(IMG_DIR_PIECES, repr + '.png')), (SQ_SIZE, SQ_SIZE)
                 )
         return images
 
@@ -152,16 +154,16 @@ class Application:
         root.eval('tk::PlaceWindow . center')
         icons = []
         if self.game.current_player == pieces.Color.BLACK:
-            icons.append(PhotoImage(file=os.path.join(IMG_DIR, 'wq_small.png')))
-            icons.append(PhotoImage(file=os.path.join(IMG_DIR, 'wr_small.png')))
-            icons.append(PhotoImage(file=os.path.join(IMG_DIR, 'wn_small.png')))
-            icons.append(PhotoImage(file=os.path.join(IMG_DIR, 'wb_small.png')))
+            icons.append(PhotoImage(file=os.path.join(IMG_DIR_ICONS, 'wq_small.png')))
+            icons.append(PhotoImage(file=os.path.join(IMG_DIR_ICONS, 'wr_small.png')))
+            icons.append(PhotoImage(file=os.path.join(IMG_DIR_ICONS, 'wn_small.png')))
+            icons.append(PhotoImage(file=os.path.join(IMG_DIR_ICONS, 'wb_small.png')))
 
         if self.game.current_player == pieces.Color.WHITE:
-            icons.append(PhotoImage(file=os.path.join(IMG_DIR, 'bq_small.png')))
-            icons.append(PhotoImage(file=os.path.join(IMG_DIR, 'br_small.png')))
-            icons.append(PhotoImage(file=os.path.join(IMG_DIR, 'bn_small.png')))
-            icons.append(PhotoImage(file=os.path.join(IMG_DIR, 'bb_small.png')))
+            icons.append(PhotoImage(file=os.path.join(IMG_DIR_ICONS, 'bq_small.png')))
+            icons.append(PhotoImage(file=os.path.join(IMG_DIR_ICONS, 'br_small.png')))
+            icons.append(PhotoImage(file=os.path.join(IMG_DIR_ICONS, 'bn_small.png')))
+            icons.append(PhotoImage(file=os.path.join(IMG_DIR_ICONS, 'bb_small.png')))
 
         tkinter.Button(
             root, image=icons[0],
