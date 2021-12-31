@@ -116,7 +116,6 @@ class Game:
 
     def _can_move(self, piece, to_pos):
         # extra handling for pawn takes
-        # TODO: verschönern!
         if isinstance(piece, p.Pawn) and piece.can_move(to_pos):
             if (piece.en_passant and
                     isinstance(self.board.get_piece((piece.pos[0], to_pos[1])), p.Pawn) and
