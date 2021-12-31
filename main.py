@@ -68,30 +68,39 @@ def build_promotion_window(game):
     root.title('Promote to...')
     root.geometry("430x120")
     root.config(bg='#DFFAFF')
-    wq_icon = PhotoImage(file=os.path.join(IMG_DIR, 'wq_small.png'))
-    wr_icon = PhotoImage(file=os.path.join(IMG_DIR, 'wr_small.png'))
-    wn_icon = PhotoImage(file=os.path.join(IMG_DIR, 'wn_small.png'))
-    wb_icon = PhotoImage(file=os.path.join(IMG_DIR, 'wb_small.png'))
+    icons = []
+    if game.current_player == pieces.Color.BLACK:
+        icons.append(PhotoImage(file=os.path.join(IMG_DIR, 'wq_small.png')))
+        icons.append(PhotoImage(file=os.path.join(IMG_DIR, 'wr_small.png')))
+        icons.append(PhotoImage(file=os.path.join(IMG_DIR, 'wn_small.png')))
+        icons.append(PhotoImage(file=os.path.join(IMG_DIR, 'wb_small.png')))
+
+    if game.current_player == pieces.Color.WHITE:
+        icons.append(PhotoImage(file=os.path.join(IMG_DIR, 'bq_small.png')))
+        icons.append(PhotoImage(file=os.path.join(IMG_DIR, 'br_small.png')))
+        icons.append(PhotoImage(file=os.path.join(IMG_DIR, 'bn_small.png')))
+        icons.append(PhotoImage(file=os.path.join(IMG_DIR, 'bb_small.png')))
+
     tkinter.Button(
-        root, image=wq_icon,
+        root, image=icons[0],
         bd=0, bg='#DFFAFF', activebackground='#DFFAFF',
         command=lambda: promote(1, game, color, root)
     ).place(x=20, y=15)
 
     tkinter.Button(
-        root, image=wr_icon,
+        root, image=icons[1],
         bd=0, bg='#DFFAFF', activebackground='#DFFAFF',
         command=lambda: promote(2, game, color, root)
     ).place(x=120, y=15)
 
     tkinter.Button(
-        root, image=wn_icon,
+        root, image=icons[2],
         bd=0, bg='#DFFAFF', activebackground='#DFFAFF',
         command=lambda: promote(3, game, color, root)
     ).place(x=220, y=15)
 
     tkinter.Button(
-        root, image=wb_icon,
+        root, image=icons[3],
         bd=0, bg='#DFFAFF', activebackground='#DFFAFF',
         command=lambda: promote(4, game, color, root)
     ).place(x=320, y=15)
