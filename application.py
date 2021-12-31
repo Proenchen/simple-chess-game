@@ -6,7 +6,7 @@ from tkinter import PhotoImage, messagebox
 from game import Game
 from board import Board, BOARD_SIZE
 
-GAME_NAME = "Julians Schachspiel"
+GAME_NAME = "Prönchen's Chess Game"
 WINDOW_ICON = 'icon.png'
 WIDTH, HEIGHT = 888, 888  # should be a multiple of BOARD_SIZE
 SQ_SIZE = WIDTH // BOARD_SIZE
@@ -22,10 +22,10 @@ class Application:
     def __init__(self):
         self.game = Game()
         self.curr_position = self.game.get_position()
-        self.game_pieces = self.load_pieces()
+        self.game_pieces = self._load_pieces()
         self.screen = None
         self.clock = None
-        self.init_screen()
+        self._init_screen()
 
     def run(self):
         # Initialize game
@@ -42,14 +42,14 @@ class Application:
                     running = False
 
                 elif event.type == pg.MOUSEBUTTONDOWN and not drag:
-                    from_pos = self.get_rc_num(pg.mouse.get_pos())
+                    from_pos = self._get_rc_num(pg.mouse.get_pos())
                     if from_pos in self.curr_position:
                         piece = self.curr_position[from_pos]
                         drag = self.game_pieces[piece.__repr__()]
                         del self.curr_position[from_pos]
 
                 elif event.type == pg.MOUSEBUTTONUP and drag:
-                    to_pos = self.get_rc_num(pg.mouse.get_pos())
+                    to_pos = self._get_rc_num(pg.mouse.get_pos())
 
                     # PLEASE DO NOT MOVE PIECES OUT OF THE WINDOW!
                     if to_pos[0] >= BOARD_SIZE or to_pos[0] < 0 or to_pos[1] >= BOARD_SIZE or to_pos[1] < 0:
@@ -61,7 +61,7 @@ class Application:
                     self.curr_position = self.game.get_position()
                     drag = None
 
-            self.draw_board()
+            self._draw_board()
 
             if self.game.last_move_from and self.game.last_move_to is not None:
                 pg.draw.rect(self.screen, MOVE_SQ_COLOR, (
@@ -73,7 +73,7 @@ class Application:
                 pg.draw.rect(self.screen, CHECK_COLOR, (
                     *self._get_coordinate(self.game.get_active_king_pos()), SQ_SIZE, SQ_SIZE))
 
-            self.draw_pieces()
+            self._draw_pieces()
 
             if drag:
                 rect = drag.get_rect(center=pg.mouse.get_pos())
@@ -94,29 +94,29 @@ class Application:
                 messagebox.showinfo("Draw!", "Stalemate!")
 
             if self.game.promotion:
-                self.build_promotion_window()
+                self._build_promotion_window()
                 self.curr_position = self.game.get_position()
-                self.draw_board()
+                self._draw_board()
 
     def _get_coordinate(self, rc):
         return rc[1] * SQ_SIZE, rc[0] * SQ_SIZE
 
-    def get_rc_num(self, xy):
+    def _get_rc_num(self, xy):
         return xy[1] // SQ_SIZE, xy[0] // SQ_SIZE
 
-    def init_screen(self):
+    def _init_screen(self):
         pg.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         self.clock = pg.time.Clock()
         pg.display.set_caption(GAME_NAME)
         pg.display.set_icon(pg.image.load(os.path.join(IMG_DIR, WINDOW_ICON)))
 
-    def draw_board(self):
+    def _draw_board(self):
         for rc, square in Board.SQUARES.items():
             color = WHITE_SQ_COLOR if square else DARK_SQ_COLOR
             pg.draw.rect(self.screen, color, (*self._get_coordinate(rc), SQ_SIZE, SQ_SIZE))
 
-    def load_pieces(self):
+    def _load_pieces(self):
         images = {}
         for dict in pieces.PIECE_REPR.values():
             for repr in dict.values():
@@ -125,11 +125,11 @@ class Application:
                 )
         return images
 
-    def draw_pieces(self):
+    def _draw_pieces(self):
         for rc, piece in self.curr_position.items():
             self.screen.blit(self.game_pieces[piece.__repr__()], self._get_coordinate(rc))
 
-    def promote(self, id, window):
+    def _promote(self, id, window):
         color = pieces.Color.WHITE if self.game.current_player == pieces.Color.BLACK else pieces.Color.BLACK
         if id == 1:
             self.game.promote(pieces.Queen.__name__, self.game.last_move_to, color)
@@ -144,11 +144,12 @@ class Application:
             self.game.promote(pieces.Bishop.__name__, self.game.last_move_to, color)
             window.destroy()
 
-    def build_promotion_window(self):
+    def _build_promotion_window(self):
         root = tkinter.Tk()
         root.title('Promote to...')
         root.geometry("430x120")
-        root.config(bg='#DFFAFF')
+        root.config(bg=DARK_SQ_COLOR)
+        root.eval('tk::PlaceWindow . center')
         icons = []
         if self.game.current_player == pieces.Color.BLACK:
             icons.append(PhotoImage(file=os.path.join(IMG_DIR, 'wq_small.png')))
@@ -164,26 +165,26 @@ class Application:
 
         tkinter.Button(
             root, image=icons[0],
-            bd=0, bg='#DFFAFF', activebackground='#DFFAFF',
-            command=lambda: self.promote(1, root)
+            bd=0, bg=WHITE_SQ_COLOR, activebackground=MOVE_SQ_COLOR,
+            command=lambda: self._promote(1, root)
         ).place(x=20, y=15)
 
         tkinter.Button(
             root, image=icons[1],
-            bd=0, bg='#DFFAFF', activebackground='#DFFAFF',
-            command=lambda: self.promote(2, root)
+            bd=0, bg=WHITE_SQ_COLOR, activebackground=MOVE_SQ_COLOR,
+            command=lambda: self._promote(2, root)
         ).place(x=120, y=15)
 
         tkinter.Button(
             root, image=icons[2],
-            bd=0, bg='#DFFAFF', activebackground='#DFFAFF',
-            command=lambda: self.promote(3, root)
+            bd=0, bg=WHITE_SQ_COLOR, activebackground=MOVE_SQ_COLOR,
+            command=lambda: self._promote(3, root)
         ).place(x=220, y=15)
 
         tkinter.Button(
             root, image=icons[3],
-            bd=0, bg='#DFFAFF', activebackground='#DFFAFF',
-            command=lambda: self.promote(4, root)
+            bd=0, bg=WHITE_SQ_COLOR, activebackground=MOVE_SQ_COLOR,
+            command=lambda: self._promote(4, root)
         ).place(x=320, y=15)
 
         root.mainloop()
