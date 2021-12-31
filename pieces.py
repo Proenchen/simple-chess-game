@@ -12,9 +12,6 @@ class Piece:
         self.pos = pos
         self.legal_moves = []
 
-    def __repr__(self):
-        return self.name
-
     def can_move(self, target):
         pass
 
@@ -27,13 +24,18 @@ class Piece:
     def clear_legal_moves(self):
         self.legal_moves.clear()
 
-    def diagonal_move(from_pos, to_pos):
+    @classmethod
+    def diagonal_move(cls, from_pos, to_pos):
         row_change = from_pos[0] - to_pos[0]
         col_change = from_pos[1] - to_pos[1]
         return abs(row_change) == abs(col_change)
 
-    def horizontal_move(from_pos, to_pos):
+    @classmethod
+    def horizontal_move(cls, from_pos, to_pos):
         return from_pos[0] == to_pos[0] or from_pos[1] == to_pos[1]
+
+    def __repr__(self):
+        return self.name
 
 
 class Knight(Piece):

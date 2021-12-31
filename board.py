@@ -12,21 +12,6 @@ class Board:
         self.board = np.empty([BOARD_SIZE, BOARD_SIZE], dtype=object)
         self._set_up()
 
-    def __repr__(self):
-        return str(self.board)
-
-    # Sets up the starting position
-    def _set_up(self):
-        for col in range(BOARD_SIZE):
-            self.board[6][col] = p.Pawn(p.Color.WHITE, (6, col))
-            self.board[1][col] = p.Pawn(p.Color.BLACK, (1, col))
-
-        placers = [p.Rook, p.Knight, p.Bishop, p.Queen, p.King, p.Bishop, p.Knight, p.Rook]
-
-        for i in range(BOARD_SIZE):
-            self.board[7][i] = placers[i](p.Color.WHITE, (7, i))
-            self.board[0][i] = placers[i](p.Color.BLACK, (0, i))
-
     def get_piece(self, pos):
         return self.board[pos[0]][pos[1]]
 
@@ -47,3 +32,18 @@ class Board:
         self.place_piece(piece, to_pos)
         piece.pos = to_pos
         self.remove_piece(from_pos)
+
+    def __repr__(self):
+        return str(self.board)
+
+    # Sets up the starting position
+    def _set_up(self):
+        for col in range(BOARD_SIZE):
+            self.board[6][col] = p.Pawn(p.Color.WHITE, (6, col))
+            self.board[1][col] = p.Pawn(p.Color.BLACK, (1, col))
+
+        placers = [p.Rook, p.Knight, p.Bishop, p.Queen, p.King, p.Bishop, p.Knight, p.Rook]
+
+        for i in range(BOARD_SIZE):
+            self.board[7][i] = placers[i](p.Color.WHITE, (7, i))
+            self.board[0][i] = placers[i](p.Color.BLACK, (0, i))
