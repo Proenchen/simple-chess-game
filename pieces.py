@@ -1,3 +1,4 @@
+import abc
 from enum import Enum
 
 
@@ -12,6 +13,7 @@ class Piece:
         self.pos = pos
         self.legal_moves = []
 
+    @abc.abstractclassmethod
     def can_move(self, target):
         pass
 
@@ -126,6 +128,6 @@ class Pawn(Piece):
 
 
 PIECE_REPR = {
-    Color.WHITE: {Pawn: "wp", Rook: "wr", Knight: "wn", Bishop: "wb", King: "wk", Queen: "wq"},
-    Color.BLACK: {Pawn: "bp", Rook: "br", Knight: "bn", Bishop: "bb", King: "bk", Queen: "bq"}
+    Color.WHITE: {Pawn: "wp", King: "wk", Queen: "wq", Rook: "wr", Knight: "wn", Bishop: "wb"},
+    Color.BLACK: {Pawn: "bp", King: "bk", Queen: "bq", Rook: "br", Knight: "bn", Bishop: "bb"}
     }

@@ -2,6 +2,8 @@ import copy
 import pieces as p
 from board import Board, BOARD_SIZE
 
+PROMOTION_PIECES = [p.Queen, p.Rook, p.Knight, p.Bishop]
+
 
 class Game:
     def __init__(self):

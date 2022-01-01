@@ -1,10 +1,11 @@
 import pygame as pg
 import os
-import pieces
+import pieces as p
 import tkinter
 from tkinter import PhotoImage, messagebox
-from game import Game
+from game import Game, PROMOTION_PIECES
 from board import Board, BOARD_SIZE
+
 
 GAME_NAME = "Prönchen's Chess Game"
 WINDOW_ICON = 'icon.png'
@@ -42,6 +43,7 @@ class Application:
 
                 if event.type == pg.QUIT:
                     running = False
+                    break
 
                 elif event.type == pg.MOUSEBUTTONDOWN and not drag:
                     from_pos = self._get_rc_num(pg.mouse.get_pos())
@@ -120,7 +122,7 @@ class Application:
 
     def _load_pieces(self):
         images = {}
-        for dict in pieces.PIECE_REPR.values():
+        for dict in p.PIECE_REPR.values():
             for repr in dict.values():
                 images[repr] = pg.transform.scale(
                     pg.image.load(os.path.join(IMG_DIR_PIECES, repr + '.png')), (SQ_SIZE, SQ_SIZE)
@@ -131,20 +133,9 @@ class Application:
         for rc, piece in self.curr_position.items():
             self.screen.blit(self.game_pieces[piece.__repr__()], self._get_coordinate(rc))
 
-    def _promote(self, id, window):
-        color = pieces.Color.WHITE if self.game.current_player == pieces.Color.BLACK else pieces.Color.BLACK
-        if id == 1:
-            self.game.promote(pieces.Queen.__name__, self.game.last_move_to, color)
-            window.destroy()
-        elif id == 2:
-            self.game.promote(pieces.Rook.__name__, self.game.last_move_to, color)
-            window.destroy()
-        elif id == 3:
-            self.game.promote(pieces.Knight.__name__, self.game.last_move_to, color)
-            window.destroy()
-        elif id == 4:
-            self.game.promote(pieces.Bishop.__name__, self.game.last_move_to, color)
-            window.destroy()
+    def _promote(self, id, window, color):
+        self.game.promote(PROMOTION_PIECES[id].__name__, self.game.last_move_to, color)
+        window.destroy()
 
     def _build_promotion_window(self):
         root = tkinter.Tk()
@@ -152,42 +143,20 @@ class Application:
         root.geometry("430x120")
         root.config(bg=DARK_SQ_COLOR)
         root.eval('tk::PlaceWindow . center')
+
         icons = []
-        if self.game.current_player == pieces.Color.BLACK:
-            icons.append(PhotoImage(file=os.path.join(IMG_DIR_ICONS, 'wq_small.png')))
-            icons.append(PhotoImage(file=os.path.join(IMG_DIR_ICONS, 'wr_small.png')))
-            icons.append(PhotoImage(file=os.path.join(IMG_DIR_ICONS, 'wn_small.png')))
-            icons.append(PhotoImage(file=os.path.join(IMG_DIR_ICONS, 'wb_small.png')))
+        promoting_color = p.Color.WHITE if self.game.current_player == p.Color.BLACK else p.Color.BLACK
+        pieces = p.PIECE_REPR[promoting_color]
+        for key in pieces:
+            if key in PROMOTION_PIECES:
+                icons.append(PhotoImage(file=os.path.join(IMG_DIR_ICONS, pieces[key] + '_small.png')))
 
-        if self.game.current_player == pieces.Color.WHITE:
-            icons.append(PhotoImage(file=os.path.join(IMG_DIR_ICONS, 'bq_small.png')))
-            icons.append(PhotoImage(file=os.path.join(IMG_DIR_ICONS, 'br_small.png')))
-            icons.append(PhotoImage(file=os.path.join(IMG_DIR_ICONS, 'bn_small.png')))
-            icons.append(PhotoImage(file=os.path.join(IMG_DIR_ICONS, 'bb_small.png')))
-
-        tkinter.Button(
-            root, image=icons[0],
-            bd=0, bg=WHITE_SQ_COLOR, activebackground=MOVE_SQ_COLOR,
-            command=lambda: self._promote(1, root)
-        ).place(x=20, y=15)
-
-        tkinter.Button(
-            root, image=icons[1],
-            bd=0, bg=WHITE_SQ_COLOR, activebackground=MOVE_SQ_COLOR,
-            command=lambda: self._promote(2, root)
-        ).place(x=120, y=15)
-
-        tkinter.Button(
-            root, image=icons[2],
-            bd=0, bg=WHITE_SQ_COLOR, activebackground=MOVE_SQ_COLOR,
-            command=lambda: self._promote(3, root)
-        ).place(x=220, y=15)
-
-        tkinter.Button(
-            root, image=icons[3],
-            bd=0, bg=WHITE_SQ_COLOR, activebackground=MOVE_SQ_COLOR,
-            command=lambda: self._promote(4, root)
-        ).place(x=320, y=15)
+        for i in range(len(icons)):
+            tkinter.Button(
+                root, image=icons[i],
+                bd=0, bg=WHITE_SQ_COLOR, activebackground=MOVE_SQ_COLOR,
+                command=lambda i=i: self._promote(i, root, promoting_color)
+            ).place(x=20 + i*100, y=15)
 
         root.mainloop()
 
