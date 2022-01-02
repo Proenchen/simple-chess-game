@@ -12,7 +12,7 @@ A simple chess implementation, which includes the following rules in addition to
    ```
    git clone https://github.com/Proenchen/simple-chess-game.git
    ```
-  - Navigate to the downloaded repository and run:
+  - Navigate to the cloned repository and run:
    ```
    python application.py
    ```
