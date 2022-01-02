@@ -91,25 +91,25 @@ class Application:
                 root.withdraw()
                 messagebox.showinfo("Checkmate!", "{} was checkmated".format(self.game.current_player.value))
 
-            if self.game.stalemate and not showed_message:
+            elif self.game.stalemate and not showed_message:
                 showed_message = True
                 root = tkinter.Tk()
                 root.withdraw()
                 messagebox.showinfo("Draw!", "Stalemate!")
 
-            if self.game.threefold_rep and not showed_message:
+            elif self.game.threefold_rep and not showed_message:
                 showed_message = True
                 root = tkinter.Tk()
                 root.withdraw()
                 messagebox.showinfo("Draw!", "Threefold Repetition!")
 
-            if self.game.fifty_moves and not showed_message:
+            elif self.game.fifty_moves and not showed_message:
                 showed_message = True
                 root = tkinter.Tk()
                 root.withdraw()
                 messagebox.showinfo("Draw!", "50-Move Rule!")
 
-            if self.game.promotion:
+            elif self.game.promotion:
                 self._build_promotion_window()
                 self.curr_position = self.game.get_position()
                 self._draw_board()
