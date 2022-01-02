@@ -103,6 +103,12 @@ class Application:
                 root.withdraw()
                 messagebox.showinfo("Draw!", "Threefold Repetition!")
 
+            if self.game.fifty_moves and not showed_message:
+                showed_message = True
+                root = tkinter.Tk()
+                root.withdraw()
+                messagebox.showinfo("Draw!", "50-Move Rule!")
+
             if self.game.promotion:
                 self._build_promotion_window()
                 self.curr_position = self.game.get_position()

@@ -18,6 +18,8 @@ class Game:
         self.genarate_moves()
         self.occured_positions = {frozenset(self.get_position()): 1}
         self.threefold_rep = False
+        self.fifty_moves = False
+        self.move_count_for_fifty = 0
 
     def get_position(self):
         current_position = {}
@@ -35,6 +37,11 @@ class Game:
 
             if self.en_passant:
                 self.occured_positions[frozenset(self.get_position())] -= 1
+
+            if isinstance(piece, p.Pawn) or (self.board.get_piece(to_pos) is not None):
+                self.move_count_for_fifty = 0
+            else:
+                self.move_count_for_fifty += 0.5
 
             self.board.move(from_pos, to_pos)
 
@@ -70,6 +77,9 @@ class Game:
             self.genarate_moves()
             if not self.is_mate():
                 self.is_stalemate()
+
+            if self.move_count_for_fifty == 50:
+                self.fifty_moves = True
 
     # Checks if a move is allowed
     def allowed_move(self, piece, to_pos):
