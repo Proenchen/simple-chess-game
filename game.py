@@ -45,12 +45,13 @@ class Game:
 
             self.board.move(from_pos, to_pos)
 
-            if self.occured_positions.get(frozenset(self.get_position())) is not None:
-                self.occured_positions[frozenset(self.get_position())] += 1
-                if self.occured_positions[frozenset(self.get_position())] == 3:
+            pos = frozenset(self.get_position())
+            if self.occured_positions.get(pos) is not None:
+                self.occured_positions[pos] += 1
+                if self.occured_positions[pos] == 3:
                     self.threefold_rep = True
             else:
-                self.occured_positions[frozenset(self.get_position())] = 1
+                self.occured_positions[pos] = 1
 
             self.last_move_from = from_pos
             self.last_move_to = to_pos
