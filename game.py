@@ -16,6 +16,8 @@ class Game:
         self.promotion = False
         self.current_player = p.Color.WHITE
         self.genarate_moves()
+        self.occured_positions = {frozenset(self.get_position()): 1}
+        self.threefold_rep = False
 
     def get_position(self):
         current_position = {}
@@ -28,7 +30,21 @@ class Game:
 
     def move(self, piece, from_pos, to_pos):
         if self.allowed_move(piece, to_pos):
+            if self.board.get_piece(to_pos) is not None or isinstance(piece, p.Pawn):
+                self.occured_positions.clear()
+
+            if self.en_passant:
+                self.occured_positions[frozenset(self.get_position())] -= 1
+
             self.board.move(from_pos, to_pos)
+
+            if self.occured_positions.get(frozenset(self.get_position())) is not None:
+                self.occured_positions[frozenset(self.get_position())] += 1
+                if self.occured_positions[frozenset(self.get_position())] == 3:
+                    self.threefold_rep = True
+            else:
+                self.occured_positions[frozenset(self.get_position())] = 1
+
             self.last_move_from = from_pos
             self.last_move_to = to_pos
 
@@ -36,16 +52,19 @@ class Game:
                 piece.moved = True
                 if to_pos[1] - from_pos[1] == 2:
                     self.board.move((to_pos[0], to_pos[1] + 1), (from_pos[0], from_pos[1] + 1))
+                    self.occured_positions.clear()
 
-                if to_pos[1] - from_pos[1] == -2:
+                elif to_pos[1] - from_pos[1] == -2:
                     self.board.move((to_pos[0], to_pos[1] - 2), (from_pos[0], from_pos[1] - 1))
+                    self.occured_positions.clear()
 
             if isinstance(piece, p.Pawn) and piece.promote:
                 self.promotion = True
 
             if self.en_passant:
-                self.board.remove_piece((self.last_move_from[0], self.last_move_to[1]))
                 self.en_passant = False
+                if isinstance(piece, p.Pawn):
+                    self.board.remove_piece((self.last_move_from[0], self.last_move_to[1]))
 
             self._change_color()
             self.genarate_moves()

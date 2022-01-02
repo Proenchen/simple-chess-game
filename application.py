@@ -97,6 +97,12 @@ class Application:
                 root.withdraw()
                 messagebox.showinfo("Draw!", "Stalemate!")
 
+            if self.game.threefold_rep and not showed_message:
+                showed_message = True
+                root = tkinter.Tk()
+                root.withdraw()
+                messagebox.showinfo("Draw!", "Threefold Repetition!")
+
             if self.game.promotion:
                 self._build_promotion_window()
                 self.curr_position = self.game.get_position()
