@@ -16,3 +16,9 @@ A simple chess implementation, which includes the following rules in addition to
    ```
    python application.py
    ```
+Make sure that you have all the necessary libraries installed.
+
+### Screenshots
+<img src="https://github.com/Proenchen/simple-chess-game/blob/main/screenshots/1.png" alt="drawing" width="500"/>
+<img src="https://github.com/Proenchen/simple-chess-game/blob/main/screenshots/2.png" alt="drawing" width="500"/>
+<img src="https://github.com/Proenchen/simple-chess-game/blob/main/screenshots/3.png" alt="drawing" width="500"/>
