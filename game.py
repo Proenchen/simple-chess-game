@@ -35,7 +35,7 @@ class Game:
             if self.board.get_piece(to_pos) is not None or isinstance(piece, p.Pawn):
                 self.occured_positions.clear()
 
-            if self.en_passant:
+            if self.en_passant and self.occured_positions.get(frozenset(self.get_position())) is not None:
                 self.occured_positions[frozenset(self.get_position())] -= 1
 
             if isinstance(piece, p.Pawn) or (self.board.get_piece(to_pos) is not None):
