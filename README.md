@@ -7,6 +7,8 @@ A simple chess implementation, which includes the following rules in addition to
   - Threefold Repetition Rule
   - 50-Move Rule
 
+An engine will be added in the future.
+
 ### Installation
   - Clone the repository:
    ```
