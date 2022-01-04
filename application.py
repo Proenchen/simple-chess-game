@@ -27,7 +27,6 @@ class Application:
         self.curr_position = self.game.get_position()
         self.game_pieces = self._load_pieces()
         self.screen = None
-        self.clock = None
         self._init_screen()
 
     def run(self):
@@ -35,10 +34,11 @@ class Application:
         running = True
         drag = None
         showed_message = False
+        clock = pg.time.Clock()
 
         # main-loop
         while running:
-            self.clock.tick(FPS)
+            clock.tick(FPS)
             for event in pg.event.get():
 
                 if event.type == pg.QUIT:
@@ -123,7 +123,6 @@ class Application:
     def _init_screen(self):
         pg.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
-        self.clock = pg.time.Clock()
         pg.display.set_caption(GAME_NAME)
         pg.display.set_icon(pg.image.load(os.path.join(IMG_DIR, WINDOW_ICON)))
 
